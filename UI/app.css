@@ -1,0 +1,126 @@
+/* Basic Styling */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* Navbar */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-weight: 600;
+}
+
+/* Player Cards */
+.card-wrapper {
+    margin-bottom: 2rem;
+}
+
+.custom-circle-image {
+    width: 150px; /* Standardized size */
+    height: 150px;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.custom-circle-image img {
+    object-fit: cover; /* Ensures image covers the circle */
+}
+
+.card-wrapper:hover .custom-circle-image {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card-title {
+    font-weight: 600;
+    color: #444;
+}
+
+/* Main Content Area */
+.content-section {
+    background: #ffffff;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+    margin-top: 2rem;
+}
+
+/* Dropzone Styling */
+#dropzone {
+    border: 2px dashed #007bff;
+    border-radius: 10px;
+    background: #fdfdff;
+    color: #555;
+    transition: all 0.3s ease;
+}
+
+#dropzone:hover {
+    border-color: #0056b3;
+    background: #f9faff;
+}
+
+#dropzone .dz-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+#dropzone .dz-message img {
+    opacity: 0.7;
+    margin-bottom: 1rem;
+}
+
+#submitBtn {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* Result Table */
+#divClassTable {
+    opacity: 0; /* Hidden by default */
+    transition: opacity 0.5s ease-in-out;
+    margin-top: 1rem;
+}
+
+#classTable {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+#classTable th, #classTable td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+#classTable th {
+    background-color: #f1f3f5;
+    font-weight: 600;
+}
+
+#classTable tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Row highlighting for the winner */
+#classTable tr.highlight-match {
+    background-color: #d4edda; /* Light green */
+    font-weight: 600;
+    color: #155724;
+}
+
+/* Error Message */
+.error {
+    display: none; /* Handled by JS */
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    padding: .75rem 1.25rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+    margin-top: 1rem;
+}

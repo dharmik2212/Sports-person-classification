@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Person Classifier</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./dropzone.min.css">
+    
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- Link to your new external CSS file -->
+    <link rel="stylesheet" href="./app.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-light bg-light justify-content-center">
+        <a class="navbar-brand" href="#">Sports Person Classifier</a>
+    </nav>
+
+    <div class="container">
+        <!-- Player Cards Section -->
+        <div class="row text-center mt-5">
+            <div class="col-12">
+                <h3 class="mb-4" style="font-weight: 300;">Models We've Trained</h3>
+            </div>
+        </div>
+        <div class="row">
+            <!-- Data-player attributes are corrected to match server names -->
+            <div class="col card-wrapper" data-player="Usain Bolt">
+                <div class="card border-0 bg-transparent">
+                    <div class="position-relative rounded-circle overflow-hidden mx-auto custom-circle-image">
+                        <img class="w-100 h-100" src="./images/bolt.jpeg" alt="Usain Bolt">
+                    </div>
+                    <div class="card-body text-center mt-2">
+                        <h4 class="text-uppercase card-title">Usain Bolt</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col card-wrapper" data-player="Mary Kom">
+                <div class="card border-0 bg-transparent">
+                    <div class="position-relative rounded-circle overflow-hidden mx-auto custom-circle-image">
+                        <img class="w-100 h-100" src="./images/kom.jpg" alt="Mary Kom">
+                    </div>
+                    <div class="card-body text-center mt-2">
+                        <h4 class="text-uppercase card-title">Mary Kom</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col card-wrapper" data-player="Niraj Chopra">
+                <div class="card border-0 bg-transparent">
+                    <div class="position-relative rounded-circle overflow-hidden mx-auto custom-circle-image">
+                        <img class="w-100 h-100" src="./images/niraj.jpg" alt="Niraj Chopra">
+                    </div>
+                    <div class="card-body text-center mt-2">
+                        <h4 class="text-uppercase card-title">Niraj Chopra</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col card-wrapper" data-player="Cristiano Ronaldo">
+                <div class="card border-0 bg-transparent">
+                    <div class="position-relative rounded-circle overflow-hidden mx-auto custom-circle-image">
+                        <img class="w-100 h-100" src="./images/ronaldo.jpg" alt="Cristiano Ronaldo">
+                    </div>
+                    <div class="card-body text-center mt-2">
+                        <h4 class="text-uppercase card-title">Cristiano Ronaldo</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col card-wrapper" data-player="Virat Kohli">
+                <div class="card border-0 bg-transparent">
+                    <div class="position-relative rounded-circle overflow-hidden mx-auto custom-circle-image">
+                        <img class="w-100 h-100" src="./images/virat.webp" alt="Virat Kohli">
+                    </div>
+                    <div class="card-body text-center mt-2">
+                        <h4 class="text-uppercase card-title">Virat Kohli</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Section -->
+        <div class="row">
+            <div class="col-lg-10 mx-auto content-section">
+                <div class="row">
+                    <!-- Upload Area -->
+                    <div class="col-md-5">
+                        <h4 class="text-center mb-3">Upload Your Image</h4>
+                        <form action="/file-upload" class="dropzone" id="dropzone">
+                            <div class="dz-message needsclick">
+                                <img src="./images/upload.png" width="50vw" height="50vw"><br>
+                                <span class="note needsclick">Drop files here or click to upload</span>
+                            </div>
+                        </form>
+                        <div class="text-center mt-3">
+                            <button id="submitBtn" type="button" class="btn btn-success btn-lg">Classify</button>
+                        </div>
+                    </div>
+
+                    <!-- Results Area -->
+                    <div class="col-md-7">
+                        <h4 class="text-center mb-3">Classification Results</h4>
+                        
+                        <!-- Error Message -->
+                        <div class="error" id="error">
+                            <p class="mb-0"><b>Oops!</b> Can't classify image. Classifier was not able to detect a face properly.</p>
+                        </div>
+
+                        <!-- Results Table -->
+                        <div id="divClassTable">
+                            <table id="classTable">
+                                <thead>
+                                    <tr>
+                                        <th>Player</th>
+                                        <th>Probability Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Usain Bolt</td>
+                                        <td id="score_Usain_Bolt"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mary Kom</td>
+                                        <td id="score_Mary_Kom"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Niraj Chopra</td>
+                                        <td id="score_Niraj_Chopra"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Cristiano Ronaldo</td>
+                                        <td id="score_Cristiano_Ronaldo"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Virat Kohli</td>
+                                        <td id="score_Virat_Kohli"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="text-center py-4 mt-5">
+        <small class="text-muted">Sports Person Classifier © 2025</small>
+    </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="./dropzone.min.js"></script>
+    <script src="./app.js"></script>
+</body>
+
+</html>
