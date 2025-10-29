@@ -1,0 +1,22 @@
+# This is content for .vercelignore
+
+# Ignore the virtual environment folder
+vev_/
+venv/
+.venv/
+
+# Ignore git files
+.git/
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+# Ignore test files and local data
+.pytest_cache/
+*.db
+*.sqlite3
+
+# Add any other large files/folders you don't need
+# like local images, datasets, etc.
+# my_large_dataset_folder/
