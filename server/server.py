@@ -3,7 +3,7 @@ from . import util
 import os
 
 template_dir = os.path.join(os.path.dirname(__file__), '..', 'UI')
-app = Flask(__name__,template_folder=template_dir)
+app = Flask(__name__,template_folder=template_dir,static_folder=template_dir,static_url_path='')
 
 util.load_saved_artifacts()
 
