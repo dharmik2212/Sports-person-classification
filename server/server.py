@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify,render_template
 from . import util
 app = Flask(__name__)
 
+util.load_saved_artifacts()
+
 @app.route('/')
 def home():
     """
@@ -32,5 +34,4 @@ def classify_img():
 
 if __name__ == "__main__":
     print("Starting Python Flask Server For Sport Person Classifier...")
-    util.load_saved_artifacts()
     app.run(port=5000)
