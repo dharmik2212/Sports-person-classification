@@ -1,6 +1,14 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify,render_template
 from . import util
 app = Flask(__name__)
+
+@app.route('/')
+def home():
+    """
+    Serves the main HTML page (the frontend).
+    """
+    # This looks for 'app.html' in the 'templates' folder
+    return render_template('D:/sports-person-classification/UI/app.html')
 
 @app.route('/classify_image', methods=['GET', 'POST'])
 def classify_img():
