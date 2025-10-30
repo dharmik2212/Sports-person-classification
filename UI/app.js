@@ -86,29 +86,55 @@
 
 Dropzone.autoDiscover = false;
 
-// This function will handle the AJAX call
-function classifyImage(file) {
-    // 1. Use FileReader to get the base64 string
-    const reader = new FileReader();
-    reader.onload = function(event) {
-        // event.target.result is the base64 string
-        const imageData = event.target.result;
+function init() {
+    let dz = new Dropzone("#dropzone", {
+        url: "/classify_image",  // Use relative URL for production
+        maxFiles: 1,
+        addRemoveLinks: true,
+        dictDefaultMessage: "Drop files here or click to upload",
+        autoProcessQueue: false,
+        acceptedFiles: "image/*",
+        // Fix for the 405 error - handle removal client-side only
+        removedfile: function(file) {
+            // Remove preview element without making server request
+            if (file.previewElement != null && file.previewElement.parentNode != null) {
+                file.previewElement.parentNode.removeChild(file.previewElement);
+            }
+            return this._updateMaxFilesReachedClass();
+        }
+    });
+    
+    dz.on("addedfile", function(file) {
+        // Remove previous file if exists
+        if (dz.files.length > 1) {
+            dz.removeFile(dz.files[0]);        
+        }
         
-        // 2. Use a relative URL (FIX 1 FOR MOBILE)
-        var url = "/classify_image"; 
+        // Reset UI on new file add
+        $("#error").hide();
+        $("#divClassTable").hide().css("opacity", 0);
+        $("#classTable tr").removeClass("highlight-match");
+        $("#classTable td[id^='score_']").html("");
+    });
 
-        // 3. Send the POST request
+    dz.on("complete", function (file) {
+        // Use relative URL - this fixes the mobile issue
+        var url = "/classify_image";
+
         $.post(url, {
-            image_data: imageData // Send the base64 data
+            image_data: file.dataURL
         }, function(data, status) {
             
             console.log(data);
+            
+            // Handle empty or invalid response
             if (!data || data.length == 0) {
-                $("#divClassTable").hide().css("opacity", 0);
+                $("#divClassTable").hide().css("opacity", 0);                
                 $("#error").show();
                 return;
             }
             
+            // Find the best match
             let match = null;
             let bestScore = -1;
             for (let i = 0; i < data.length; ++i) {
@@ -118,84 +144,57 @@ function classifyImage(file) {
                     bestScore = maxScoreForThisClass;
                 }
             }
+            
             if (match) {
                 $("#error").hide();
-                $("#divClassTable").show().animate({ opacity: 1 }, 500); // Fade in table
+                $("#divClassTable").show().animate({ opacity: 1 }, 500);
 
                 let classDictionary = match.class_dictionary;
                 for (let personName in classDictionary) {
                     let index = classDictionary[personName];
-                    let proabilityScore = match.class_probability[index];
+                    let probabilityScore = match.class_probability[index];
+                    
+                    // Build the element ID selector
                     let elementName = "#score_" + personName.replace(/ /g, "_");
-                    $(elementName).html(proabilityScore.toFixed(2) + "%");
+                    
+                    // Set the score
+                    $(elementName).html(probabilityScore.toFixed(2) + "%");
                 }
                 
+                // Highlight the winning row
                 let winnerRowId = "#score_" + match.class.replace(/ /g, "_");
                 $(winnerRowId).closest("tr").addClass("highlight-match");
             }
+        }).fail(function(xhr, status, error) {
+            // Handle AJAX errors
+            console.error("Classification failed:", error);
+            console.error("Status:", status);
+            console.error("Response:", xhr.responseText);
+            $("#error").show();
+            $("#divClassTable").hide().css("opacity", 0);
         });
-    };
-    
-    // 4. Read the file
-    reader.readAsDataURL(file);
-}
-
-function init() {
-    let dz = new Dropzone("#dropzone", {
-        url: "#", // This URL will NOT be used
-        maxFiles: 1,
-        addRemoveLinks: true,
-        dictDefaultMessage: "Some Message",
-        autoProcessQueue: false // We are handling everything manually
     });
 
-    // --- FIX 2 (FOR 405 ERROR): Override the removeFile function ---
-    dz.removeFile = function(file) {
-        if (this.files.indexOf(file) !== -1) {
-            this.files.splice(this.files.indexOf(file), 1);
-        }
-        if (file.previewElement != null && file.previewElement.parentNode != null) {
-            file.previewElement.parentNode.removeChild(file.previewElement);
-        }
-        $("#error").hide();
-        $("#divClassTable").hide().css("opacity", 0);
-        $("#classTable tr").removeClass("highlight-match");
-        $("#classTable td[id^='score_']").html("");
-        return this;
-    };
-    // -----------------------------------------------------------
-    
-    dz.on("addedfile", function(file) {
-        if (dz.files.length > 1) { 
-            dz.removeFile(dz.files[0]); 
-        }
-        // Reset UI on new file add
-        $("#error").hide();
-        $("#divClassTable").hide().css("opacity", 0);
-        $("#classTable tr").removeClass("highlight-match");
-        $("#classTable td[id^='score_']").html("");
-    });
-
-    // --- THIS IS THE NEW, CORRECT BUTTON LOGIC ---
+    // Classify button click handler
     $("#submitBtn").on('click', function (e) {
-        if (dz.files.length > 0) {
-            let file = dz.files[0];
-            classifyImage(file); // Call our manual function
-        } else {
-            $("#error").html("<p class='mb-0'><b>Oops!</b> Please upload an image first.</p>").show();
-        }  
+        e.preventDefault();
+        
+        // Check if file is added
+        if (dz.files.length === 0) {
+            alert("Please upload an image first!");
+            return;
+        }
+        
+        dz.processQueue();
     });
-    // ----------------------------------------------------
 }
 
 $(document).ready(function() {
-    console.log( "ready!" );
+    console.log("Sports Classifier ready!");
     $("#error").hide();
     $("#divClassTable").hide();
 
     init();
 });
-
-
 
 
