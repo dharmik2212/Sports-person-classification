@@ -12,12 +12,16 @@ colorama==0.4.6
     # via click
 flask==3.1.2
     # via -r requirements.in
+gunicorn==23.0.0
+    # via -r requirements.in
 itsdangerous==2.2.0
     # via flask
 jinja2==3.1.6
     # via flask
 joblib==1.5.2
-    # via scikit-learn
+    # via
+    #   -r requirements.in
+    #   scikit-learn
 markupsafe==3.0.3
     # via
     #   flask
@@ -26,11 +30,13 @@ markupsafe==3.0.3
 numpy==2.2.6
     # via
     #   -r requirements.in
-    #   opencv-python-headless
+    #   opencv-python
     #   scikit-learn
     #   scipy
-opencv-python-headless==4.12.0.88
+opencv-python==4.12.0.88
     # via -r requirements.in
+packaging==25.0
+    # via gunicorn
 scikit-learn==1.7.2
     # via -r requirements.in
 scipy==1.16.3
