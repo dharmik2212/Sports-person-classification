@@ -86,64 +86,13 @@
 
 Dropzone.autoDiscover = false;
 
-// This function will handle the AJAX call
-function classifyImage(file) {
-    let imageData = file.dataURL;
-    
-    // --- FIX 1 (FOR MOBILE): Use a relative URL ---
-    // This works on local and on your live Render website
-    var url = "/classify_image"; 
-
-    $.post(url, {
-        image_data: imageData // Send the base64 data
-    }, function(data, status) {
-        
-        console.log(data);
-        if (!data || data.length == 0) {
-            $("#divClassTable").hide().css("opacity", 0);
-            $("#error").show();
-            return;
-        }
-        
-        let match = null;
-        let bestScore = -1;
-        for (let i = 0; i < data.length; ++i) {
-            let maxScoreForThisClass = Math.max(...data[i].class_probability);
-            if (maxScoreForThisClass > bestScore) {
-                match = data[i];
-                bestScore = maxScoreForThisClass;
-            }
-        }
-        if (match) {
-            $("#error").hide();
-            $("#divClassTable").show().animate({ opacity: 1 }, 500); // Fade in table
-
-            let classDictionary = match.class_dictionary;
-            for (let personName in classDictionary) {
-                let index = classDictionary[personName];
-                let proabilityScore = match.class_probability[index];
-                
-                // Build the element ID selector
-                let elementName = "#score_" + personName.replace(/ /g, "_");
-                
-                // Set the score
-                $(elementName).html(proabilityScore.toFixed(2) + "%");
-            }
-            
-            // Highlight the winning row
-            let winnerRowId = "#score_" + match.class.replace(/ /g, "_");
-            $(winnerRowId).closest("tr").addClass("highlight-match");
-        }
-    });
-}
-
 function init() {
     let dz = new Dropzone("#dropzone", {
-        url: "#", // We aren't using Dropzone's auto-upload, so this doesn't matter
+        url: "#", // Set to '#' to prevent any default POST on file add
         maxFiles: 1,
         addRemoveLinks: true,
         dictDefaultMessage: "Some Message",
-        autoProcessQueue: false // We will manually trigger the classification
+        autoProcessQueue: false // We will manually trigger on button click
     });
 
     // --- FIX 2 (FOR 405 ERROR): Override the removeFile function ---
@@ -181,6 +130,78 @@ function init() {
         $("#classTable td[id^='score_']").html("");
     });
 
+    // --- THIS IS THE ORIGINAL LOGIC, NOW CORRECTED ---
+    dz.on("complete", function (file) {
+        let imageData = file.dataURL;
+        
+        // --- FIX 1 (FOR MOBILE): Use a relative URL ---
+        var url = "/classify_image"; // This works on local and on Render
+
+        $.post(url, {
+            image_data: file.dataURL
+        },function(data, status) {
+            
+            console.log(data);
+            if (!data || data.length==0) {
+                $("#divClassTable").hide().css("opacity", 0);            
+                $("#error").show();
+                return;
+            }
+            
+            let match = null;
+            let bestScore = -1;
+            for (let i=0;i<data.length;++i) {
+                let maxScoreForThisClass = Math.max(...data[i].class_probability);
+                if(maxScoreForThisClass>bestScore) {
+                    match = data[i];
+                    bestScore = maxScoreForThisClass;
+                }
+            }
+            if (match) {
+                $("#error").hide();
+                $("#divClassTable").show().animate({ opacity: 1 }, 500); // Fade in table
+
+                let classDictionary = match.class_dictionary;
+                for(let personName in classDictionary) {
+                    let index = classDictionary[personName];
+                    let proabilityScore = match.class_probability[index];
+                    
+                    // Build the element ID selector
+                    let elementName = "#score_" + personName.replace(/ /g, "_");
+                    
+                    // Set the score
+                    $(elementName).html(proabilityScore.toFixed(2) + "%");
+                }
+                
+                // Highlight the winning row
+                let winnerRowId = "#score_" + match.class.replace(/ /g, "_");
+                $(winnerRowId).closest("tr").addClass("highlight-match");
+            }
+        });
+    });
+    // ----------------------------------------------------
+
+    // --- THIS IS THE ORIGINAL, CORRECT BUTTON LOGIC ---
+    $("#submitBtn").on('click', function (e) {
+        if (dz.files.length > 0) {
+            dz.processQueue(); // This triggers the "complete" event above
+        } else {
+            // A non-alert way to show an error
+            $("#error").html("<p class='mb-0'><b>Oops!</b> Please upload an image first.</p>").show();
+        }  
+    });
+    // ----------------------------------------------------
+}
+
+$(document).ready(function() {
+    console.log( "ready!" );
+    $("#error").hide();
+    $("#divClassTable").hide();
+
+    init();
+});
+
+
     // --- FIX 3 (LOGICAL FLAW): Manually call our function ---
     // This makes the classify button call our $.post function directly
     $("#submitBtn").on('click', function (e) {
@@ -193,11 +214,12 @@ function init() {
         // We NO LONGER call dz.processQueue();
     });
     // ----------------------------------------------------
-}
-
 $(document).ready(function() {
     console.log( "ready!" );
     $("#error").hide();
     $("#divClassTable").hide();
+
     init();
 });
+
+
