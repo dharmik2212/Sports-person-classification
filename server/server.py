@@ -1,6 +1,9 @@
 from flask import Flask, request, jsonify,render_template
 from . import util
-app = Flask(__name__)
+import os
+
+template_dir = os.path.join(os.path.dirname(__file__), '..', 'UI')
+app = Flask(__name__,template_folder=template_dir)
 
 util.load_saved_artifacts()
 
@@ -10,7 +13,7 @@ def home():
     Serves the main HTML page (the frontend).
     """
     # This looks for 'app.html' in the 'templates' folder
-    return render_template('D:/sports-person-classification/UI/app.html')
+    return render_template('app.html')
 
 @app.route('/classify_image', methods=['GET', 'POST'])
 def classify_img():
